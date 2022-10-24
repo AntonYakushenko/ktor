@@ -20,10 +20,12 @@ import io.ktor.client.statement.*
 import kotlin.test.*
 import io.ktor.server.testing.*
 import com.example.plugins.*
+import io.kotest.assertions.ktor.client.shouldHaveStatus
+import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
 import io.ktor.http.cio.*
 import org.junit.runner.RunWith
-
 
 class ApplicationTest {
    @Test
@@ -37,4 +39,14 @@ class ApplicationTest {
             println(client.get("/"))
         }
     }
-}
+
+    @Test
+    fun testRoot2() = testApplication {
+        application {
+            configureRouting()
+        }
+        val client = HttpClient(CIO)
+        val response = client.get("http://mydomain.com/foo")
+        response.shouldHaveStatus(HttpStatusCode.NotFound)
+        }
+    }
